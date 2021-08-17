@@ -1,0 +1,4 @@
+# Build Path of Test Fixtures
+node_modules/
+dist/
+.DS_Store
