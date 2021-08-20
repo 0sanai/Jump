@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { useState, useEffect } from "react";
-import "./ui.css";
+import "./ui.scss";
 
 const App = () => {
   const [nodeList, setNodeList] = useState([]);
@@ -40,7 +40,11 @@ const App = () => {
       />
       <ul className="NodeList">
         {nodeList.map((node) => (
-          <li key={node.node.id} onClick={() => onClickNode(node)}>
+          <li
+            className="NodeListItem"
+            key={node.node.id}
+            onClick={() => onClickNode(node)}
+          >
             <span className="FrameName">{node.name}</span>
             <span className="PageName">{node.pageName}</span>
           </li>
