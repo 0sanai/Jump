@@ -47,7 +47,9 @@ function traverse(node) {
 
 function isMatchQuery(name, queryArray) {
   for (let i = 0; i < queryArray.length; i++) {
-    if (name.indexOf(queryArray[i]) < 0) {
+    const lowerName = name.toLowerCase();
+    const lowerQuery = queryArray[i].toLowerCase();
+    if (lowerName.indexOf(lowerQuery) < 0) {
       return false;
     }
   }
