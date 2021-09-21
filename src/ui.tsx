@@ -29,15 +29,17 @@ const App = () => {
   };
 
   return (
-    <div>
-      <input
-        className="SearchBox"
-        type="text"
-        name=""
-        id=""
-        onChange={onChangeQuery}
-        autoFocus
-      />
+    <main className="Jump">
+      <div className="SearchBox">
+        <input
+          className="SearchBoxInput"
+          type="text"
+          name=""
+          id=""
+          onChange={onChangeQuery}
+          autoFocus
+        />
+      </div>
       <ul className="NodeList">
         {nodeList.map((node) => (
           <li
@@ -45,12 +47,12 @@ const App = () => {
             key={node.node.id}
             onClick={() => onClickNode(node)}
           >
-            <span className="FrameName">{node.name}</span>
-            <span className="PageName">{node.pageName}</span>
+            <span className="NodeListItem_frameName">{node.name}</span>
+            <span className="NodeListItem_pageName">{node.pageName}</span>
           </li>
         ))}
       </ul>
-    </div>
+    </main>
   );
 };
 
