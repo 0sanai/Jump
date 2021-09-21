@@ -1,8 +1,8 @@
 {
   "name": "sandbox",
   "version": "1.0.0",
-  "description": "",
-  "main": "code.js",
+  "description": "Jump is a Figma plugin that quickly navigates to a specified artboard.",
+  "main": "code.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production",
