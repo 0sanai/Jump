@@ -26,9 +26,15 @@ const Jump = {
 };
 
 function traverse(node) {
-  if (node.type.toLowerCase() == "page") {
-    parentPage = node;
-  } else if (node.type.toLowerCase() == "frame") {
+  const nodeType = node.type.toLowerCase();
+  if (nodeType == "document" || nodeType == "page") {
+    if (nodeType == "page") {
+      parentPage = node;
+    }
+    if (node.children) {
+      node.children.forEach(traverse);
+    }
+  } else if (nodeType == "frame") {
     nodeList.push({
       node: node,
       type: node.type,
@@ -36,10 +42,6 @@ function traverse(node) {
       page: parentPage,
       pageName: parentPage.name,
     });
-  }
-
-  if (node.children && node.type.toLowerCase() != "frame") {
-    node.children.forEach(traverse);
   }
 }
 
