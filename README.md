@@ -1,6 +1,6 @@
 # Jump
 
-In this Figma plug-in, you can move instantly to the specified frame.
+Easy access to specified frames and components.
 
 To build:
 
