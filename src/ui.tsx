@@ -15,12 +15,13 @@ const App = () => {
   }, []);
 
   const onMessage = (e: any) => {
-    const nodeList = e.data.pluginMessage.nodeList;
-    setNodeList(nodeList);
+    if (e.data.pluginMessage.nodeList) {
+      setNodeList(e.data.pluginMessage.nodeList);
+    }
   };
 
   const onClickNode = (node) => {
-    parent.postMessage({ pluginMessage: { type: "focus-node", node } }, "*");
+    parent.postMessage({ pluginMessage: { type: "click-node", node } }, "*");
   };
 
   const onChangeQuery = (e) => {
@@ -38,6 +39,7 @@ const App = () => {
           id=""
           onChange={onChangeQuery}
           autoFocus
+          placeholder="Search..."
         />
       </div>
       <ul className="NodeList">
