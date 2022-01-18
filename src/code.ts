@@ -1,11 +1,11 @@
-import Jump from "./Jump";
+import Jump from './Jump';
 
 Jump.init();
 
 figma.ui.onmessage = (msg) => {
-  if (msg.type === "click-node") {
+  if (msg.type === 'focus-node') {
     Jump.focusNode(msg.node);
-  } else if (msg.type === "update-query") {
+  } else if (msg.type === 'search-node') {
     Jump.searchNode(msg.query);
   }
 };

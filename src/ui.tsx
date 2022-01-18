@@ -1,32 +1,64 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { useState, useEffect } from "react";
-import "./ui.scss";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import {useState, useEffect} from 'react';
+import './ui.scss';
 
 const App = () => {
   const [nodeList, setNodeList] = useState([]);
+  const [nodeIndex, setNodeIndex] = useState(-1);
+  const [listClassNames, setListClassNames] = useState([]);
 
   useEffect(() => {
-    window.addEventListener("message", onMessage);
+    window.addEventListener('message', onMessage);
 
     return function cleanup() {
-      window.removeEventListener("message", onMessage);
+      window.removeEventListener('message', onMessage);
     };
   }, []);
 
+  useEffect(() => {
+    if (0 <= nodeIndex && nodeIndex < nodeList.length) {
+      const node = nodeList[nodeIndex];
+      parent.postMessage({pluginMessage: {type: 'focus-node', node}}, '*');
+      setListClassNames(
+        nodeList.map((node, index) => (index === nodeIndex ? 'active' : ''))
+      );
+    }
+  }, [nodeIndex]);
+
   const onMessage = (e: any) => {
-    if (e.data.pluginMessage.nodeList) {
-      setNodeList(e.data.pluginMessage.nodeList);
+    const nodeListData = e.data.pluginMessage.nodeList;
+    if (nodeListData) {
+      setNodeList(nodeListData);
+      setNodeIndex(-1);
+      setListClassNames(nodeListData.map(() => ''));
     }
   };
 
-  const onClickNode = (node) => {
-    parent.postMessage({ pluginMessage: { type: "click-node", node } }, "*");
+  const onClickNode = (node, index) => {
+    parent.postMessage({pluginMessage: {type: 'focus-node', node}}, '*');
+    setNodeIndex(index);
   };
 
   const onChangeQuery = (e) => {
     const query = e.target.value;
-    parent.postMessage({ pluginMessage: { type: "update-query", query } }, "*");
+    parent.postMessage({pluginMessage: {type: 'search-node', query}}, '*');
+  };
+
+  const onKeyDown = (e) => {
+    if (nodeList.length === 0) {
+      return false;
+    }
+
+    if (e.key === 'ArrowDown' || (e.key === 'n' && e.ctrlKey)) {
+      if (nodeIndex < nodeList.length - 1) {
+        setNodeIndex((prevIndex) => prevIndex + 1);
+      }
+    } else if (e.key === 'ArrowUp' || (e.key === 'p' && e.ctrlKey)) {
+      if (nodeIndex > 0) {
+        setNodeIndex((prevIndex) => prevIndex - 1);
+      }
+    }
   };
 
   return (
@@ -35,19 +67,18 @@ const App = () => {
         <input
           className="SearchBoxInput"
           type="text"
-          name=""
-          id=""
           onChange={onChangeQuery}
+          onKeyDown={onKeyDown}
           autoFocus
           placeholder="Search..."
         />
       </div>
       <ul className="NodeList">
-        {nodeList.map((node) => (
+        {nodeList.map((node, index) => (
           <li
-            className="NodeListItem"
-            key={node.node.id}
-            onClick={() => onClickNode(node)}
+            className={`NodeListItem ` + listClassNames[index]}
+            key={index}
+            onClick={() => onClickNode(node, index)}
           >
             <span className="NodeListItem_frameName">{node.name}</span>
             <span className="NodeListItem_pageName">{node.pageName}</span>
@@ -58,4 +89,4 @@ const App = () => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById("react-page"));
+ReactDOM.render(<App />, document.getElementById('react-page'));
