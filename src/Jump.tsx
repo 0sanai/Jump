@@ -2,22 +2,22 @@ let nodeList = [];
 
 const Jump = {
   init() {
-    figma.showUI(__html__, { width: 400, height: 480 });
+    figma.showUI(__html__, {width: 400, height: 480});
     this.updateNodes();
   },
 
   updateNodes() {
     nodeList = figma.root.children
       .map((p) =>
-        p.type === "PAGE"
+        p.type === 'PAGE'
           ? p.children.map((n) =>
-              n.type === "FRAME" || n.type === "COMPONENT"
+              n.type === 'FRAME' || n.type === 'COMPONENT'
                 ? {
                     node: n,
                     type: n.type,
                     name: n.name,
                     page: p,
-                    pageName: p.name,
+                    pageName: p.name
                   }
                 : null
             )
@@ -27,7 +27,7 @@ const Jump = {
         return accumulator.concat(currentValue);
       })
       .filter(Boolean);
-    figma.ui.postMessage({ nodeList: nodeList });
+    figma.ui.postMessage({nodeList: nodeList});
   },
 
   focusNode(node) {
@@ -43,8 +43,8 @@ const Jump = {
         newNodeList.push(nodeList[i]);
       }
     }
-    figma.ui.postMessage({ nodeList: newNodeList });
-  },
+    figma.ui.postMessage({nodeList: newNodeList});
+  }
 };
 
 function isMatchQuery(name, queryArray) {

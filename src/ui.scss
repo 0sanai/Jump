@@ -1,4 +1,4 @@
-@import "./variables";
+@import './variables';
 
 * {
   box-sizing: border-box;
@@ -48,7 +48,7 @@
 .NodeListItem {
   border-radius: $border-radius;
   padding: $space-small $space-medium;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 
   &:hover {
     background-color: $color-secondary;
@@ -57,5 +57,15 @@
   &_pageName {
     margin-left: $space-medium;
     color: $color-text-light;
+  }
+
+  &.active,
+  &.active:hover {
+    background-color: $color-primary;
+    color: rgba(255, 255, 255, 1);
+  }
+
+  &.active &_pageName {
+    color: rgba(255, 255, 255, 0.75);
   }
 }
