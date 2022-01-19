@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {useState, useEffect} from 'react';
+import SearchBox from './components/SearchBox';
 import './ui.scss';
 
 const App = () => {
@@ -40,39 +41,15 @@ const App = () => {
     setNodeIndex(index);
   };
 
-  const onChangeQuery = (e) => {
-    const query = e.target.value;
-    parent.postMessage({pluginMessage: {type: 'search-node', query}}, '*');
-  };
-
-  const onKeyDown = (e) => {
-    if (nodeList.length === 0) {
-      return false;
-    }
-
-    if (e.key === 'ArrowDown' || (e.key === 'n' && e.ctrlKey)) {
-      if (nodeIndex < nodeList.length - 1) {
-        setNodeIndex((prevIndex) => prevIndex + 1);
-      }
-    } else if (e.key === 'ArrowUp' || (e.key === 'p' && e.ctrlKey)) {
-      if (nodeIndex > 0) {
-        setNodeIndex((prevIndex) => prevIndex - 1);
-      }
-    }
-  };
-
   return (
     <main className="Jump">
-      <div className="SearchBox">
-        <input
-          className="SearchBoxInput"
-          type="text"
-          onChange={onChangeQuery}
-          onKeyDown={onKeyDown}
-          autoFocus
-          placeholder="Search..."
-        />
-      </div>
+      <SearchBox
+        nodeList={nodeList}
+        nodeIndex={nodeIndex}
+        onChangeIndex={(n) => {
+          setNodeIndex((prevIndex) => prevIndex + n);
+        }}
+      />
       <ul className="NodeList">
         {nodeList.map((node, index) => (
           <li
