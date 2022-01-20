@@ -36,20 +36,30 @@ const App = () => {
     }
   };
 
+  const onKeyDown = (e) => {
+    if (nodeList.length === 0) {
+      return false;
+    }
+
+    if (e.key === 'ArrowDown' || (e.key === 'n' && e.ctrlKey)) {
+      if (nodeIndex < nodeList.length - 1) {
+        setNodeIndex((prevIndex) => prevIndex + 1);
+      }
+    } else if (e.key === 'ArrowUp' || (e.key === 'p' && e.ctrlKey)) {
+      if (nodeIndex > 0) {
+        setNodeIndex((prevIndex) => prevIndex - 1);
+      }
+    }
+  };
+
   const onClickNode = (node, index) => {
     parent.postMessage({pluginMessage: {type: 'focus-node', node}}, '*');
     setNodeIndex(index);
   };
 
   return (
-    <main className="Jump">
-      <SearchBox
-        nodeList={nodeList}
-        nodeIndex={nodeIndex}
-        onChangeIndex={(n) => {
-          setNodeIndex((prevIndex) => prevIndex + n);
-        }}
-      />
+    <main className="Jump" onKeyDown={onKeyDown}>
+      <SearchBox />
       <ul className="NodeList">
         {nodeList.map((node, index) => (
           <li
