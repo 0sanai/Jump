@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {useState, useEffect} from 'react';
+import SearchBox from './components/SearchBox';
 import './ui.scss';
 
 const App = () => {
@@ -35,16 +36,6 @@ const App = () => {
     }
   };
 
-  const onClickNode = (node, index) => {
-    parent.postMessage({pluginMessage: {type: 'focus-node', node}}, '*');
-    setNodeIndex(index);
-  };
-
-  const onChangeQuery = (e) => {
-    const query = e.target.value;
-    parent.postMessage({pluginMessage: {type: 'search-node', query}}, '*');
-  };
-
   const onKeyDown = (e) => {
     if (nodeList.length === 0) {
       return false;
@@ -61,18 +52,14 @@ const App = () => {
     }
   };
 
+  const onClickNode = (node, index) => {
+    parent.postMessage({pluginMessage: {type: 'focus-node', node}}, '*');
+    setNodeIndex(index);
+  };
+
   return (
-    <main className="Jump">
-      <div className="SearchBox">
-        <input
-          className="SearchBoxInput"
-          type="text"
-          onChange={onChangeQuery}
-          onKeyDown={onKeyDown}
-          autoFocus
-          placeholder="Search..."
-        />
-      </div>
+    <main className="Jump" onKeyDown={onKeyDown}>
+      <SearchBox />
       <ul className="NodeList">
         {nodeList.map((node, index) => (
           <li
