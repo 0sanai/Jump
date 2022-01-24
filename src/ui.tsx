@@ -1,9 +1,9 @@
-import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {useState, useEffect} from 'react';
+import {css} from '@emotion/react';
+import {space, color} from './styles/styles';
 import SearchBox from './components/SearchBox';
 import NodeList from './components/NodeList';
-import './ui.scss';
 
 const App = () => {
   const [nodeData, setNodeData] = useState([]);
@@ -11,7 +11,6 @@ const App = () => {
 
   useEffect(() => {
     window.addEventListener('message', onMessage);
-
     return function cleanup() {
       window.removeEventListener('message', onMessage);
     };
@@ -49,7 +48,7 @@ const App = () => {
   };
 
   return (
-    <main className="Jump" onKeyDown={onKeyDown}>
+    <main css={Jump} onKeyDown={onKeyDown}>
       <SearchBox />
       <NodeList
         nodeData={nodeData}
@@ -59,5 +58,17 @@ const App = () => {
     </main>
   );
 };
+
+const Jump = css`
+  &,
+  & * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  font: 12px sans-serif;
+  padding: ${space.large};
+  color: ${color.dartText};
+`;
 
 ReactDOM.render(<App />, document.getElementById('react-page'));

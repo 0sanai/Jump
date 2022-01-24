@@ -1,5 +1,11 @@
-import * as React from 'react';
 import {useState, useEffect} from 'react';
+import {
+  NodeListWrapper,
+  NodeListItem,
+  PageName,
+  PageNameActive,
+  ActiveNodeListItem
+} from './style';
 
 type Props = {
   nodeData: any[];
@@ -16,22 +22,24 @@ const NodeList = ({nodeData, activeNodeIndex, onClickNode}: Props) => {
 
   useEffect(() => {
     setListClassNames(
-      nodeData.map((node, index) => (index === activeNodeIndex ? 'active' : ''))
+      nodeData.map((node, index) => (index === activeNodeIndex ? true : false))
     );
   }, [activeNodeIndex]);
 
   return (
-    <ul className="NodeList">
+    <ul css={NodeListWrapper}>
       {nodeData.map((node, index) => (
         <li
-          className={`NodeListItem ` + listClassNames[index]}
+          css={listClassNames[index] ? ActiveNodeListItem : NodeListItem}
           key={index}
           onClick={(e) => {
             onClickNode(index);
           }}
         >
-          <span className="NodeListItem_frameName">{node.name}</span>
-          <span className="NodeListItem_pageName">{node.pageName}</span>
+          {node.name}
+          <span css={listClassNames[index] ? PageNameActive : PageName}>
+            {node.pageName}
+          </span>
         </li>
       ))}
     </ul>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import {SearchBoxWrapper, SearchBoxInput} from './style';
 
 const SearchBox = () => {
   const onChangeQuery = (e) => {
@@ -7,9 +7,9 @@ const SearchBox = () => {
   };
 
   return (
-    <div className="SearchBox">
+    <div css={SearchBoxWrapper}>
       <input
-        className="SearchBoxInput"
+        css={SearchBoxInput}
         type="text"
         onChange={onChangeQuery}
         autoFocus

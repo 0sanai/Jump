@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "jsx": "react"
+    "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
+    "moduleResolution": "node"
   }
 }
