@@ -1,9 +1,8 @@
 import * as ReactDOM from 'react-dom';
 import {useState, useEffect} from 'react';
-import {css} from '@emotion/react';
-import {space, color} from './styles/styles';
 import SearchBox from './components/SearchBox';
 import NodeList from './components/NodeList';
+import {Jump} from './styles/ui';
 
 const App = () => {
   const [nodeData, setNodeData] = useState([]);
@@ -58,17 +57,5 @@ const App = () => {
     </main>
   );
 };
-
-const Jump = css`
-  &,
-  & * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  font: 12px sans-serif;
-  padding: ${space.large};
-  color: ${color.dartText};
-`;
 
 ReactDOM.render(<App />, document.getElementById('react-page'));
