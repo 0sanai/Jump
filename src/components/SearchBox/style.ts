@@ -1,5 +1,5 @@
 import {css} from '@emotion/react';
-import {space, color, borderRadius} from '../../styles/styles';
+import {space, color, borderRadius} from '../../styles/variable';
 
 export const SearchBoxWrapper = css`
   width: 100%;
