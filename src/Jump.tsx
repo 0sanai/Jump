@@ -1,12 +1,7 @@
 let nodeList = [];
 
 const Jump = {
-  init() {
-    figma.showUI(__html__, {width: 400, height: 480});
-    this.updateNodes();
-  },
-
-  updateNodes() {
+  createNodeList() {
     nodeList = figma.root.children
       .map((p) =>
         p.type === 'PAGE'
@@ -23,27 +18,19 @@ const Jump = {
             )
           : null
       )
-      .reduce((accumulator, currentValue) => {
-        return accumulator.concat(currentValue);
+      .reduce((previousNodeList, currentNodeList) => {
+        return previousNodeList.concat(currentNodeList);
       })
       .filter(Boolean);
-    figma.ui.postMessage({nodeList: nodeList});
-  },
-
-  focusNode(node) {
-    figma.currentPage = node.page;
-    figma.viewport.scrollAndZoomIntoView([node.node]);
+    return nodeList;
   },
 
   searchNode(query) {
     const queryArray = [...new Set(query.split(/ |　/))].filter(Boolean);
-    const newNodeList = [];
-    for (let i in nodeList) {
-      if (isMatchQuery(nodeList[i].name, queryArray)) {
-        newNodeList.push(nodeList[i]);
-      }
-    }
-    figma.ui.postMessage({nodeList: newNodeList});
+    const newNodeList = nodeList
+      .map((node) => (isMatchQuery(node.name, queryArray) ? node : null))
+      .filter(Boolean);
+    return newNodeList;
   }
 };
 
