@@ -1,8 +1,6 @@
-import Jump from './Jump';
+const nodeList = createNodeList();
 
 figma.showUI(__html__, {width: 400, height: 480});
-
-const nodeList = Jump.createNodeList();
 figma.ui.postMessage({nodeList: nodeList});
 
 figma.ui.onmessage = (msg) => {
@@ -12,8 +10,50 @@ figma.ui.onmessage = (msg) => {
       figma.viewport.scrollAndZoomIntoView([msg.node.node]);
       break;
     case 'search-node':
-      const newNodeList = Jump.searchNode(msg.query);
+      const newNodeList = searchNode(msg.query);
       figma.ui.postMessage({nodeList: newNodeList});
       break;
   }
 };
+
+function createNodeList() {
+  const nodeList = figma.root.children
+    .map((page) =>
+      page.type === 'PAGE'
+        ? page.children.map((node) =>
+            node.type === 'FRAME' || node.type === 'COMPONENT'
+              ? {
+                  node: node,
+                  name: node.name,
+                  page: page,
+                  pageName: page.name
+                }
+              : null
+          )
+        : null
+    )
+    .reduce((previousNodeList, currentNodeList) => {
+      return previousNodeList.concat(currentNodeList);
+    })
+    .filter(Boolean);
+  return nodeList;
+}
+
+function searchNode(query) {
+  const queryArray = [...new Set(query.split(/ |　/))].filter(Boolean);
+  const newNodeList = nodeList
+    .map((node) => (isMatchQuery(node.name, queryArray) ? node : null))
+    .filter(Boolean);
+  return newNodeList;
+}
+
+function isMatchQuery(name, queryArray) {
+  for (let i = 0; i < queryArray.length; i++) {
+    const lowerName = name.toLowerCase();
+    const lowerQuery = queryArray[i].toLowerCase();
+    if (lowerName.indexOf(lowerQuery) < 0) {
+      return false;
+    }
+  }
+  return true;
+}
