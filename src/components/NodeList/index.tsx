@@ -33,7 +33,7 @@ const NodeList = ({nodeData, activeNodeIndex, onClickNode}: Props) => {
           css={listClassNames[index] ? ActiveNodeListItem : NodeListItem}
           key={index}
           onClick={(e) => {
-            onClickNode(index);
+            onClickNode({activeIndex: index});
           }}
         >
           {node.name}
