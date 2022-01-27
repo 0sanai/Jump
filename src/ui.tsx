@@ -5,42 +5,59 @@ import NodeList from './components/NodeList';
 import {Jump} from './styles/ui';
 
 type State = {
+  data: any[];
   activeIndex: number;
 };
 
 type Action = {
-  type?: 'NEXT' | 'PREV' | 'RESET';
+  type: 'NEXT' | 'PREV' | 'SET';
+  data?: any[];
   activeIndex?: number;
 };
 
-const initialState: State = {activeIndex: -1};
+const initialState: State = {data: [], activeIndex: -1};
 const reducer = (state: State, action: Action) => {
   switch (action.type) {
     case 'NEXT':
-      return {...state, activeIndex: state.activeIndex + 1};
+      if (state.activeIndex + 1 < state.data.length) {
+        return {...state, activeIndex: state.activeIndex + 1};
+      }
+      return state;
     case 'PREV':
-      return {...state, activeIndex: state.activeIndex - 1};
-    case 'RESET':
-      return initialState;
-    default:
-      return {...state, activeIndex: action.activeIndex};
+      if (state.activeIndex > 0) {
+        return {...state, activeIndex: state.activeIndex - 1};
+      }
+      return state;
+    case 'SET':
+      if (action.data) {
+        return {
+          ...state,
+          data: action.data,
+          activeIndex: initialState.activeIndex
+        };
+      }
+      if (action.activeIndex !== undefined) {
+        return {...state, activeIndex: action.activeIndex};
+      }
+      return state;
   }
 };
 
 const App = () => {
-  const [nodeData, setNodeData] = useState([]);
   const [node, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     window.addEventListener('message', onMessage);
+    window.addEventListener('keydown', onKeyDown);
     return function cleanup() {
       window.removeEventListener('message', onMessage);
+      window.removeEventListener('keydown', onKeyDown);
     };
   }, []);
 
   useEffect(() => {
-    if (0 <= node.activeIndex && node.activeIndex < nodeData.length) {
-      const activeNode = nodeData[node.activeIndex];
+    if (node.activeIndex !== initialState.activeIndex) {
+      const activeNode = node.data[node.activeIndex];
       parent.postMessage(
         {pluginMessage: {type: 'focus-node', node: activeNode}},
         '*'
@@ -51,32 +68,29 @@ const App = () => {
   const onMessage = (e: any) => {
     const nodeListData = e.data.pluginMessage.nodeList;
     if (nodeListData) {
-      setNodeData(nodeListData);
-      dispatch({type: 'RESET'});
+      dispatch({type: 'SET', data: nodeListData});
     }
   };
 
   const onKeyDown = (e) => {
-    if (nodeData.length === 0) {
-      return false;
-    }
-
-    if (e.key === 'ArrowDown' || (e.key === 'n' && e.ctrlKey)) {
-      if (node.activeIndex < nodeData.length - 1) {
-        dispatch({type: 'NEXT'});
-      }
-    } else if (e.key === 'ArrowUp' || (e.key === 'p' && e.ctrlKey)) {
-      if (node.activeIndex > 0) {
-        dispatch({type: 'PREV'});
-      }
+    if (e.key === 'ArrowDown') {
+      dispatch({type: 'NEXT'});
+    } else if (e.key === 'n' && e.ctrlKey) {
+      dispatch({type: 'NEXT'});
+      e.preventDefault();
+    } else if (e.key === 'ArrowUp') {
+      dispatch({type: 'PREV'});
+    } else if (e.key === 'p' && e.ctrlKey) {
+      dispatch({type: 'PREV'});
+      e.preventDefault();
     }
   };
 
   return (
-    <main css={Jump} onKeyDown={onKeyDown}>
+    <main css={Jump}>
       <SearchBox />
       <NodeList
-        nodeData={nodeData}
+        nodeData={node.data}
         activeNodeIndex={node.activeIndex}
         onClickNode={dispatch}
       />
