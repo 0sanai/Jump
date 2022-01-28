@@ -1,50 +1,24 @@
 import * as ReactDOM from 'react-dom';
-import {useState, useEffect, useReducer} from 'react';
+import {useEffect} from 'react';
+import {useNodeReducer, createNodeContext} from './hooks/useNode';
 import SearchBox from './components/SearchBox';
 import NodeList from './components/NodeList';
 import {Jump} from './styles/ui';
 
-type State = {
-  data: any[];
-  activeIndex: number;
-};
-
-type Action = {
-  type: 'NEXT' | 'PREV' | 'SET';
-  data?: any[];
-  activeIndex?: number;
-};
-
-const initialState: State = {data: [], activeIndex: -1};
-const reducer = (state: State, action: Action) => {
-  switch (action.type) {
-    case 'NEXT':
-      if (state.activeIndex + 1 < state.data.length) {
-        return {...state, activeIndex: state.activeIndex + 1};
-      }
-      return state;
-    case 'PREV':
-      if (state.activeIndex > 0) {
-        return {...state, activeIndex: state.activeIndex - 1};
-      }
-      return state;
-    case 'SET':
-      if (action.data) {
-        return {
-          ...state,
-          data: action.data,
-          activeIndex: initialState.activeIndex
-        };
-      }
-      if (action.activeIndex !== undefined) {
-        return {...state, activeIndex: action.activeIndex};
-      }
-      return state;
-  }
-};
+export const NodeContext = createNodeContext();
 
 const App = () => {
-  const [node, dispatch] = useReducer(reducer, initialState);
+  const [node, dispatch] = useNodeReducer();
+
+  useEffect(() => {
+    const activeNode = node.data[node.activeIndex];
+    if (activeNode) {
+      parent.postMessage(
+        {pluginMessage: {type: 'focus-node', node: activeNode}},
+        '*'
+      );
+    }
+  }, [node.activeIndex]);
 
   useEffect(() => {
     window.addEventListener('message', onMessage);
@@ -55,16 +29,6 @@ const App = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (node.activeIndex !== initialState.activeIndex) {
-      const activeNode = node.data[node.activeIndex];
-      parent.postMessage(
-        {pluginMessage: {type: 'focus-node', node: activeNode}},
-        '*'
-      );
-    }
-  }, [node.activeIndex]);
-
   const onMessage = (e: any) => {
     const nodeListData = e.data.pluginMessage.nodeList;
     if (nodeListData) {
@@ -73,28 +37,29 @@ const App = () => {
   };
 
   const onKeyDown = (e) => {
-    if (e.key === 'ArrowDown') {
+    if (e.key === 'ArrowDown' || (e.key === 'n' && e.ctrlKey)) {
       dispatch({type: 'NEXT'});
-    } else if (e.key === 'n' && e.ctrlKey) {
-      dispatch({type: 'NEXT'});
-      e.preventDefault();
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === 'ArrowUp' || (e.key === 'p' && e.ctrlKey)) {
       dispatch({type: 'PREV'});
-    } else if (e.key === 'p' && e.ctrlKey) {
-      dispatch({type: 'PREV'});
+    }
+
+    // Figmaのショートカットキーを起動させない
+    if ((e.key === 'n' && e.ctrlKey) || (e.key === 'p' && e.ctrlKey)) {
       e.preventDefault();
     }
   };
 
   return (
-    <main css={Jump}>
-      <SearchBox />
-      <NodeList
-        nodeData={node.data}
-        activeNodeIndex={node.activeIndex}
-        onClickNode={dispatch}
-      />
-    </main>
+    <NodeContext.Provider value={node}>
+      <main css={Jump}>
+        <SearchBox />
+        <NodeList
+          onClickNode={(index) => {
+            dispatch({type: 'SET', activeIndex: index});
+          }}
+        />
+      </main>
+    </NodeContext.Provider>
   );
 };
 
