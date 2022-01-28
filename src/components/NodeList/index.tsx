@@ -1,4 +1,5 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
+import {NodeContext} from '../../ui';
 import {
   NodeListWrapper,
   NodeListItem,
@@ -8,36 +9,35 @@ import {
 } from './style';
 
 type Props = {
-  nodeData: any[];
-  activeNodeIndex: number;
   onClickNode: (number) => void;
 };
 
-const NodeList = ({nodeData, activeNodeIndex, onClickNode}: Props) => {
-  const [listClassNames, setListClassNames] = useState([]);
+const NodeList = ({onClickNode}: Props) => {
+  const [isActive, setIsActive] = useState([]);
+  const node = useContext(NodeContext);
 
   useEffect(() => {
-    setListClassNames(nodeData.map(() => ''));
-  }, [nodeData]);
+    setIsActive(node.data.map(() => false));
+  }, [node.data]);
 
   useEffect(() => {
-    setListClassNames(
-      nodeData.map((node, index) => (index === activeNodeIndex ? true : false))
+    setIsActive(
+      node.data.map((n, index) => (index === node.activeIndex ? true : false))
     );
-  }, [activeNodeIndex]);
+  }, [node.activeIndex]);
 
   return (
     <ul css={NodeListWrapper}>
-      {nodeData.map((node, index) => (
+      {node.data.map((node, index) => (
         <li
-          css={listClassNames[index] ? ActiveNodeListItem : NodeListItem}
+          css={isActive[index] ? ActiveNodeListItem : NodeListItem}
           key={index}
           onClick={(e) => {
-            onClickNode({type: 'SET', activeIndex: index});
+            onClickNode(index);
           }}
         >
           {node.name}
-          <span css={listClassNames[index] ? PageNameActive : PageName}>
+          <span css={isActive[index] ? PageNameActive : PageName}>
             {node.pageName}
           </span>
         </li>
