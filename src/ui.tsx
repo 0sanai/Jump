@@ -1,5 +1,5 @@
 import * as ReactDOM from 'react-dom';
-import {useState, useEffect, useReducer} from 'react';
+import {useEffect, useReducer} from 'react';
 import SearchBox from './components/SearchBox';
 import NodeList from './components/NodeList';
 import {Jump} from './styles/ui';
@@ -73,15 +73,14 @@ const App = () => {
   };
 
   const onKeyDown = (e) => {
-    if (e.key === 'ArrowDown') {
+    if (e.key === 'ArrowDown' || (e.key === 'n' && e.ctrlKey)) {
       dispatch({type: 'NEXT'});
-    } else if (e.key === 'n' && e.ctrlKey) {
-      dispatch({type: 'NEXT'});
-      e.preventDefault();
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === 'ArrowUp' || (e.key === 'p' && e.ctrlKey)) {
       dispatch({type: 'PREV'});
-    } else if (e.key === 'p' && e.ctrlKey) {
-      dispatch({type: 'PREV'});
+    }
+
+    // Figmaのショートカットキーを起動させない
+    if ((e.key === 'n' && e.ctrlKey) || (e.key === 'p' && e.ctrlKey)) {
       e.preventDefault();
     }
   };
