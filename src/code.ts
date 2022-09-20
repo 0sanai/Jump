@@ -13,7 +13,10 @@ figma.ui.onmessage = (msg) => {
       const newNodeList = searchNode(msg.query);
       figma.ui.postMessage({nodeList: newNodeList});
       break;
-  }
+    case 'close':
+      figma.closePlugin();
+      break;
+    }
 };
 
 function createNodeList() {
