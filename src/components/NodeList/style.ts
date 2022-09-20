@@ -12,6 +12,7 @@ export const NodeListItem = css`
   border-radius: ${borderRadius.defalut};
   padding: ${space.small} ${space.medium};
   transition: background-color 0.2s ease, color 0.2s ease;
+  word-break: break-all;
 
   &:hover {
     background-color: ${color.secondary};
