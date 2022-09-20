@@ -41,6 +41,11 @@ const App = () => {
       dispatch({type: 'NEXT'});
     } else if (e.key === 'ArrowUp' || (e.key === 'p' && e.ctrlKey)) {
       dispatch({type: 'PREV'});
+    } else if (e.key === 'Escape') {
+      parent.postMessage(
+        {pluginMessage: {type: 'close'}},
+        '*'
+      );
     }
 
     // Figmaのショートカットキーを起動させない
