@@ -27,6 +27,7 @@
     "webpack-cli": "^4.8.0"
   },
   "devDependencies": {
+    "@figma/plugin-typings": "*",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0"
   }
